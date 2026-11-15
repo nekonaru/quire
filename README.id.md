@@ -50,6 +50,8 @@
 
 > _"Markdown masuk, situs keluar. Tanpa JavaScript, tanpa trik."_
 
+Live demo: https://nekonaru.github.io/quire/ (situs `examples/demo` di repository ini, di-deploy oleh GitHub Actions pada setiap perubahan).
+
 ---
 
 ## Fitur
@@ -401,6 +403,7 @@ Quire membangun file statis dari Markdown kamu sendiri; Quire tidak menjalankan 
 |----------|--------|
 | `ci.yml` | RuboCop, RSpec (Ruby 3.2 dan 3.4 di Linux, Windows, macOS), build gem, build situs contoh, secret scan pada setiap push dan pull request |
 | `release.yml` | Membangun gem dan membuat draft GitHub release dengan catatan changelog pada tag `v*` |
+| `deploy-demo.yml` | Membangun situs demo dan men-deploy-nya ke GitHub Pages pada setiap push ke main yang menyentuh demo atau generator |
 
 Release di-tag hanya setelah CI hijau di branch default.
 
