@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "cgi"
+require "date"
 
 module Quire
   # Builds an Atom feed for the most recent posts.

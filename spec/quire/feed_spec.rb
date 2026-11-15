@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rexml/document"
+
 RSpec.describe Quire::Feed do
   let(:site) { instance_double("Quire::Site", config: config) }
   let(:config) do
@@ -21,10 +23,11 @@ RSpec.describe Quire::Feed do
 
   it "builds a valid Atom feed" do
     xml = described_class.new(site).to_xml([post])
-    expect(xml).to include("<feed xmlns=\"http://www.w3.org/2005/Atom\">")
-    expect(xml).to include("<title>Hello</title>")
-    expect(xml).to include("https://example.com/posts/hello/")
-    expect(xml).to include("An excerpt")
+    document = REXML::Document.new(xml)
+    expect(document.root.name).to eq("feed")
+    expect(REXML::XPath.first(document, "//title").text).to eq("Example Site")
+    expect(REXML::XPath.match(document, "//entry/title").map(&:text)).to include("Hello")
+    expect(REXML::XPath.first(document, "//entry/link").attributes["href"]).to eq("https://example.com/posts/hello/")
   end
 
   it "escapes HTML in titles" do

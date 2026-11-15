@@ -3,6 +3,7 @@
 require "erb"
 require "cgi"
 require_relative "errors"
+require_relative "slug"
 require_relative "theme"
 
 module Quire
@@ -50,11 +51,29 @@ module Quire
     def render_file(path, page:, content:, locals:)
       template = File.read(path, encoding: "bom|utf-8")
       context = ViewContext.new(self, @site, page, content, locals)
-      ERB.new(template, trim_mode: "-").result(context.erb_binding)
+      erb = ERB.new(template, trim_mode: "-")
+      erb.filename = path
+      erb.result(context.erb_binding)
     rescue Error
       raise
+    rescue SyntaxError => e
+      line = extract_line(e, path)
+      detail = e.message.lines.map(&:strip).find { |l| l != "" } || "syntax error"
+      raise Error.new("ERB syntax error: #{detail}", file: path, line: line)
     rescue ScriptError, StandardError => e
-      raise Error.new("failed to render #{path}: #{e.message}", file: path)
+      raise Error.new("failed to render: #{e.message}", file: path, line: extract_line(e, path))
+    end
+
+    # ERB embeds the template path in backtraces and syntax errors when
+    # filename is set; use it to report file and line.
+    def extract_line(error, path)
+      error.backtrace&.each do |entry|
+        match = entry.match(/#{Regexp.escape(path)}:(\d+)/)
+        return match[1].to_i if match
+      end
+
+      match = error.message.match(/:(\d+)[:\s]/) || error.message.match(/line (\d+)/i)
+      match && match[1].to_i
     end
 
     # Binding exposed to templates. Templates should call h() for any text
