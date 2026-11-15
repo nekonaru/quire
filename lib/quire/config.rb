@@ -100,6 +100,10 @@ module Quire
       @data["base_url"] = @data["base_url"].to_s.sub(%r{/+\z}, "")
       @data["posts_per_page"] = Integer(@data["posts_per_page"])
       @data["menu"] = normalize_menu(@data["menu"])
+      unless @data["theme"].to_s.match?(/\A[a-z0-9_-]+\z/)
+        raise Error.new("theme must be a simple theme name (lowercase letters, numbers, - and _), got #{@data['theme'].inspect}",
+                        file: FILE_NAME)
+      end
     rescue ArgumentError, TypeError
       raise Error.new("posts_per_page must be an integer in #{FILE_NAME}", file: FILE_NAME)
     end

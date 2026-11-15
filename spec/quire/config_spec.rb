@@ -28,6 +28,11 @@ RSpec.describe Quire::Config do
     expect(described_class.new(dir).absolute_url("/posts/x/")).to eq("https://example.com/posts/x/")
   end
 
+  it "rejects a theme name with path traversal" do
+    File.write(File.join(dir, "quire.yml"), "theme: ../../etc\n")
+    expect { described_class.new(dir) }.to raise_error(Quire::Error, /theme/)
+  end
+
   it "rejects a non-integer posts_per_page" do
     File.write(File.join(dir, "quire.yml"), "posts_per_page: lots\n")
     expect { described_class.new(dir) }.to raise_error(Quire::Error, /posts_per_page/)

@@ -33,6 +33,11 @@ RSpec.describe Quire::Document do
     expect(doc.layout).to eq("page")
   end
 
+  it "rejects a layout name with path traversal" do
+    path = write_post("x.md", "---\nlayout: ../../secret\n---\nBody\n")
+    expect { described_class.new(path, kind: :post).layout }.to raise_error(Quire::Error, /layout/)
+  end
+
   it "treats draft strings as truthy" do
     path = write_post("x.md", "---\ndraft: true\n---\nBody\n")
     expect(described_class.new(path, kind: :post).draft?).to be(true)

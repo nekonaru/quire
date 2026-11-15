@@ -47,7 +47,13 @@ module Quire
 
     def layout
       value = attributes["layout"].to_s.strip
-      value.empty? ? default_layout : value
+      return default_layout if value.empty?
+
+      unless value.match?(/\A[a-z0-9_-]+\z/)
+        raise Error.new("layout must be a simple layout name (lowercase letters, numbers, - and _), got #{value.inspect}", file: path)
+      end
+
+      value
     end
 
     def description
