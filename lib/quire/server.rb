@@ -8,6 +8,7 @@ require_relative "builder"
 require_relative "config_poller"
 require_relative "errors"
 require_relative "http_helpers"
+require_relative "static_site"
 
 module Quire
   # Local development server. Serves the built site and reloads the browser
@@ -93,7 +94,7 @@ module Quire
     end
 
     def mount_site(server)
-      public_dir = File.join(@root, "public")
+      static_site = StaticSite.new(File.join(@root, "public"))
       server.mount_proc("/") do |req, res|
         unless HttpHelpers.local_host?(req["Host"])
           res.status = 403
@@ -102,36 +103,12 @@ module Quire
           next
         end
 
-        serve_file(public_dir, req.path, res)
+        status, content_type, body, headers = static_site.handle(req.path)
+        res.status = status
+        res["Content-Type"] = content_type
+        headers.each { |key, value| res[key] = value }
+        res.body = body
       end
-    end
-
-    def serve_file(public_dir, request_path, res)
-      relative = request_path.sub(%r{\A/+}, "")
-      candidate = File.join(public_dir, relative)
-      candidate = File.join(candidate, "index.html") if request_path.end_with?("/") || File.extname(relative).empty?
-
-      unless HttpHelpers.safe_within?(public_dir, candidate) && File.file?(candidate)
-        respond_not_found(public_dir, res)
-        return
-      end
-
-      res.status = 200
-      res["Content-Type"] = HttpHelpers.content_type(candidate)
-      body = File.binread(candidate)
-      body = HttpHelpers.inject_reload(body) if candidate.end_with?(".html")
-      res.body = body
-    end
-
-    def respond_not_found(public_dir, res)
-      not_found = File.join(public_dir, "404.html")
-      res.status = 404
-      res["Content-Type"] = "text/html"
-      res.body = if File.exist?(not_found)
-                   HttpHelpers.inject_reload(File.read(not_found))
-                 else
-                   "<h1>404 Not Found</h1>"
-                 end
     end
   end
 end
