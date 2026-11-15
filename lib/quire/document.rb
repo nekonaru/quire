@@ -78,7 +78,11 @@ module Quire
              .gsub(/[#>*_\-|]/, "")
              .gsub(/\s+/, " ")
              .strip
-      text.length > length ? "#{text[0...length].rpartition(' ').first}..." : text
+      return text if text.length <= length
+
+      cut = text[0...length].rpartition(" ").first
+      cut = text[0...length] if cut.nil? || cut.empty?
+      "#{cut}..."
     end
 
     def file_name

@@ -49,4 +49,12 @@ RSpec.describe Quire::Document do
     expect(excerpt).to include("Some bold text")
     expect(excerpt).not_to include("**")
   end
+
+  it "falls back to a hard cut when the first 160 characters have no space" do
+    body = "a" * 300
+    path = write_post("x.md", "---\ntitle: X\n---\n#{body}\n")
+    excerpt = described_class.new(path, kind: :post).excerpt
+    expect(excerpt).to end_with("...")
+    expect(excerpt.length).to be > 160
+  end
 end

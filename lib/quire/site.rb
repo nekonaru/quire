@@ -4,6 +4,7 @@ require "yaml"
 require_relative "config"
 require_relative "document"
 require_relative "errors"
+require_relative "slug"
 
 module Quire
   # The site model: posts, pages, tags and data files, loaded from a site
@@ -21,8 +22,7 @@ module Quire
       all_posts = @posts_all ||= load_documents("content/posts", kind: :post)
       all_posts
         .select { |post| post_visible?(post, drafts: drafts, future: future, today: today) }
-        .sort_by { |post| post.date || Date.new(1970, 1, 1) }
-        .reverse
+        .sort_by { |post| [post_sort_key(post), post.file_name] }
     end
 
     def pages(drafts: false)
@@ -35,6 +35,7 @@ module Quire
       posts(drafts: drafts, future: future).each do |post|
         post.tags.each { |tag| index[tag] << post }
       end
+      assert_no_slug_collisions!(index.keys)
       index
     end
 
@@ -44,6 +45,23 @@ module Quire
     end
 
     private
+
+    # Tag pages are written to /tags/<slug>/; two tags that slug to the same
+    # page would silently overwrite each other, so fail loudly instead.
+    def assert_no_slug_collisions!(tag_names)
+      seen = {}
+      tag_names.each do |tag|
+        slug = Slug.slugify(tag)
+        raise Error, "tags #{seen[slug].inspect} and #{tag.inspect} both map to /tags/#{slug}/; rename one of them" if seen.key?(slug)
+
+        seen[slug] = tag
+      end
+    end
+
+    # Sorts newest first, with file_name as a deterministic tiebreak.
+    def post_sort_key(post)
+      -(post.date || Date.new(1970, 1, 1)).jd
+    end
 
     def post_visible?(post, drafts:, future:, today:)
       return false if !drafts && post.draft?
