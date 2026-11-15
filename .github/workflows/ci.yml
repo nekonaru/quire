@@ -37,10 +37,12 @@ jobs:
         run: gem build quire.gemspec
 
       - name: Build the example site
-        run: ruby -Ilib -e "require 'quire'; Quire::Builder.new('examples/demo', force: true).build"
+        run: |
+          ruby -Ilib -e "require 'quire'; Quire::Builder.new('examples/demo', force: true).build"
 
       - name: Check the example site output
-        run: ruby -e "abort 'missing index' unless File.exist?('examples/demo/public/index.html'); abort 'missing feed' unless File.exist?('examples/demo/public/feed.xml')"
+        run: |
+          ruby -e "abort 'missing index' unless File.exist?('examples/demo/public/index.html'); abort 'missing feed' unless File.exist?('examples/demo/public/feed.xml')"
 
   secret-scan:
     name: secret-scan
