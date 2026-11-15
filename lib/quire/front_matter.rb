@@ -26,7 +26,7 @@ module Quire
       raise Error.new("front matter opening '---' has no closing '---'", file: file, line: 1) unless closing_index
 
       closing_index += 1 # adjust for the slice offset
-      yaml_block = lines[1..closing_index].join
+      yaml_block = lines[1...closing_index].join
       body = lines[(closing_index + 1)..]&.join || ""
 
       attributes = safe_load(yaml_block, file)

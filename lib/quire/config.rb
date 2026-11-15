@@ -98,14 +98,23 @@ module Quire
 
     def normalize!
       @data["base_url"] = @data["base_url"].to_s.sub(%r{/+\z}, "")
-      @data["posts_per_page"] = Integer(@data["posts_per_page"])
+      @data["posts_per_page"] = normalize_posts_per_page(@data["posts_per_page"])
       @data["menu"] = normalize_menu(@data["menu"])
-      unless @data["theme"].to_s.match?(/\A[a-z0-9_-]+\z/)
-        raise Error.new("theme must be a simple theme name (lowercase letters, numbers, - and _), got #{@data['theme'].inspect}",
-                        file: FILE_NAME)
+      return if @data["theme"].to_s.match?(/\A[a-z0-9_-]+\z/)
+
+      raise Error.new("theme must be a simple theme name (lowercase letters, numbers, - and _), got #{@data['theme'].inspect}",
+                      file: FILE_NAME)
+    end
+
+    def normalize_posts_per_page(value)
+      unless value.is_a?(Integer) || (value.is_a?(String) && value.match?(/\A\d+\z/))
+        raise Error.new("posts_per_page must be an integer in #{FILE_NAME}, got #{value.inspect}", file: FILE_NAME)
       end
-    rescue ArgumentError, TypeError
-      raise Error.new("posts_per_page must be an integer in #{FILE_NAME}", file: FILE_NAME)
+
+      page = value.to_i
+      raise Error.new("posts_per_page must be at least 1 in #{FILE_NAME}", file: FILE_NAME) if page < 1
+
+      page
     end
 
     def normalize_menu(menu)

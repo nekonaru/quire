@@ -20,4 +20,10 @@ RSpec.describe Quire::Slug do
   it "returns empty string for unusable input" do
     expect(Quire::Slug.slugify("!!!")).to eq("")
   end
+
+  it "does not raise on strings tagged with a non-Unicode encoding" do
+    ibm437 = "Crème brûlée".encode(Encoding::IBM437)
+    expect { Quire::Slug.slugify(ibm437) }.not_to raise_error
+    expect(Quire::Slug.slugify(ibm437)).to eq("creme-brulee")
+  end
 end
