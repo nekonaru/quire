@@ -102,7 +102,7 @@
 | **Git** | any recent | Required only to install from GitHub |
 
 > [!TIP]
-> You do not need to build anything. `gem install --git` installs Quire straight from GitHub.
+> You do not need to build anything. Option A installs the prebuilt gem in two commands.
 
 ### Never used a terminal? Start here
 
@@ -137,10 +137,14 @@
 
 ## Installation
 
-### Option A: Install from GitHub (easiest)
+### Option A: Download the prebuilt gem (easiest)
+
+1. Open https://github.com/nekonaru/quire/releases/latest
+2. Download `quire-0.1.0.gem` from Assets
+3. Install it:
 
 ```bash
-gem install --git https://github.com/nekonaru/quire.git
+gem install ./quire-0.1.0.gem
 quire version
 ```
 
