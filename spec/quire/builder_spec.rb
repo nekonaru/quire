@@ -29,7 +29,7 @@ RSpec.describe Quire::Builder do
     expect(File.exist?(File.join(output_dir, "assets", "style.css"))).to be(true)
 
     sitemap = File.read(File.join(output_dir, "sitemap.xml"))
-    expect(sitemap).to include("https://nekonaru.github.io/quire-demo/posts/shipping-quire-v0-1/")
+    expect(sitemap).to include("https://nekonaru.github.io/quire/posts/shipping-quire-v0-1/")
   end
 
   it "builds the new site template with the blog theme" do

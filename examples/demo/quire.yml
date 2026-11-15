@@ -1,7 +1,7 @@
 title: Niko Dharma
 description: Developer building small, sharp tools. Portfolios, static sites, and Ruby.
 author: Nicolas Dwi Dharma
-base_url: "https://nekonaru.github.io/quire-demo"
+base_url: "https://nekonaru.github.io/quire"
 theme: portfolio
 posts_per_page: 5
 email: niko@example.com
