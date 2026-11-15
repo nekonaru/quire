@@ -1,0 +1,15 @@
+<div class="container">
+  <h1 class="index-title"><%= h(page.title) %></h1>
+  <p><%= h(posts.size) %> post<%= posts.size == 1 ? "" : "s" %> tagged <strong><%= h(tag) %></strong></p>
+
+  <ol class="post-list">
+    <% posts.each do |post| %>
+      <li class="post-list-item">
+        <a class="post-list-link" href="<%= h(url(post.url)) %>"><%= h(post.title) %></a>
+        <p class="post-list-meta"><time datetime="<%= post.date %>"><%= format_date(post.date) %></time></p>
+      </li>
+    <% end %>
+  </ol>
+
+  <p><a href="<%= h(tags_url) %>">All tags</a></p>
+</div>

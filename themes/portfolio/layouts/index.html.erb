@@ -1,0 +1,66 @@
+<section class="hero">
+  <div class="container">
+    <p class="hero-kicker">Portfolio</p>
+    <h1 class="hero-title"><%= h(config.title) %></h1>
+    <% unless config.description.to_s.empty? %>
+      <p class="hero-sub"><%= h(config.description) %></p>
+    <% end %>
+    <p class="hero-actions">
+      <% if config.email %><a class="button" href="mailto:<%= h(config.email) %>">Contact</a><% end %>
+      <a class="button ghost" href="<%= h(url('/about/')) %>">About me</a>
+    </p>
+  </div>
+</section>
+
+<section class="container section" id="projects" aria-labelledby="projects-heading">
+  <h2 class="section-title" id="projects-heading">Projects</h2>
+  <% projects = Array(site.data['projects']) %>
+  <% if projects.empty? %>
+    <p class="empty">No projects listed yet. Add some to <code>data/projects.yml</code>.</p>
+  <% else %>
+    <ul class="project-grid">
+      <% projects.each do |project| %>
+        <li class="project-card">
+          <% if project['url'].to_s.strip.empty? %>
+            <h3 class="project-name"><%= h(project['name'] || project['title']) %></h3>
+          <% else %>
+            <h3 class="project-name"><a href="<%= h(project['url']) %>" rel="noopener"><%= h(project['name'] || project['title']) %></a></h3>
+          <% end %>
+          <% if project['description'] %><p class="project-description"><%= h(project['description']) %></p><% end %>
+          <% if project['tech'] %><p class="project-tech"><%= h(project['tech']) %></p><% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
+
+<section class="container section" aria-labelledby="writing-heading">
+  <h2 class="section-title" id="writing-heading">Writing</h2>
+  <% if posts.empty? %>
+    <p class="empty">No posts yet.</p>
+  <% else %>
+    <ol class="post-list">
+      <% posts.each do |post| %>
+        <li class="post-list-item">
+          <a class="post-list-link" href="<%= h(url(post.url)) %>"><%= h(post.title) %></a>
+          <p class="post-list-meta">
+            <time datetime="<%= post.date %>"><%= format_date(post.date) %></time>
+            <% post.tags.first(3).each do |tag| %>
+              <a class="tag" href="<%= h(tag_url(tag)) %>"><%= h(tag) %></a>
+            <% end %>
+          </p>
+        </li>
+      <% end %>
+    </ol>
+
+    <nav class="pagination" aria-label="Pagination">
+      <% if pagination.prev_url %>
+        <a class="page-link" href="<%= h(url(pagination.prev_url)) %>" rel="prev">Newer posts</a>
+      <% end %>
+      <span class="page-status">Page <%= pagination.current_page %> of <%= pagination.total_pages %></span>
+      <% if pagination.next_url %>
+        <a class="page-link" href="<%= h(url(pagination.next_url)) %>" rel="next">Older posts</a>
+      <% end %>
+    </nav>
+  <% end %>
+</section>

@@ -1,0 +1,8 @@
+- name: Quire
+  description: Static site generator written in Ruby. Markdown in, static site out.
+  url: https://github.com/nekonaru/quire
+  tech: Ruby
+- name: Example Project
+  description: A sample project to show how to fill out this file.
+  url: ""
+  tech: Rails

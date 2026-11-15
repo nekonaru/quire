@@ -1,0 +1,31 @@
+/* Rouge syntax highlighting, tuned for the blog theme. */
+.highlight { background: var(--code-bg); color: var(--text); }
+.highlight .c, .highlight .c1, .highlight .cm, .highlight .cs { color: #6a737d; font-style: italic; }
+.highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt { color: #d73a49; }
+.highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc, .highlight .sh, .highlight .sx { color: #032f62; }
+.highlight .sr { color: #032f62; }
+.highlight .se { color: #032f62; font-weight: bold; }
+.highlight .n, .highlight .na, .highlight .nb, .highlight .nc, .highlight .ne, .highlight .nf, .highlight .nl, .highlight .nn, .highlight .no, .highlight .nv { color: var(--text); }
+.highlight .na, .highlight .nb { color: #005cc5; }
+.highlight .nn, .highlight .nc { color: #6f42c1; }
+.highlight .nf { color: #6f42c1; }
+.highlight .o, .highlight .ow { color: #d73a49; }
+.highlight .mi, .highlight .mf, .highlight .mh, .highlight .mo { color: #005cc5; }
+.highlight .err { color: #b31d28; background: #ffeef0; }
+.highlight .gi { color: #22863a; background: #f0fff4; }
+.highlight .gd { color: #b31d28; background: #ffeef0; }
+.highlight .gh { color: #005cc5; font-weight: bold; }
+
+@media (prefers-color-scheme: dark) {
+  .highlight .c, .highlight .c1, .highlight .cm, .highlight .cs { color: #8b949e; }
+  .highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kt { color: #ff7b72; }
+  .highlight .s, .highlight .s1, .highlight .s2, .highlight .sb, .highlight .sc, .highlight .sh, .highlight .sx, .highlight .sr { color: #a5d6ff; }
+  .highlight .na, .highlight .nb { color: #79c0ff; }
+  .highlight .nn, .highlight .nc, .highlight .nf { color: #d2a8ff; }
+  .highlight .o, .highlight .ow { color: #ff7b72; }
+  .highlight .mi, .highlight .mf, .highlight .mh, .highlight .mo { color: #79c0ff; }
+  .highlight .err { color: #ffa198; background: #490202; }
+  .highlight .gi { color: #7ee787; background: #0d2118; }
+  .highlight .gd { color: #ffa198; background: #490202; }
+  .highlight .gh { color: #1f6feb; font-weight: bold; }
+}

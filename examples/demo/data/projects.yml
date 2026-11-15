@@ -1,0 +1,12 @@
+- name: Quire
+  description: Static site generator written in Ruby. Markdown in, static site out.
+  url: https://github.com/nekonaru/quire
+  tech: Ruby
+- name: Swara
+  description: Offline music player for Android with an analytics dashboard.
+  url: https://github.com/nekonaru/swara
+  tech: Flutter
+- name: Taskee
+  description: Tiny task tracker for people who like plain files.
+  url: https://github.com/nekonaru/taskee
+  tech: JavaScript

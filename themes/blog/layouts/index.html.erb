@@ -1,0 +1,36 @@
+<div class="container">
+  <header class="index-header">
+    <h1 class="index-title"><%= h(config.title) %></h1>
+    <% unless config.description.to_s.empty? %>
+      <p class="index-description"><%= h(config.description) %></p>
+    <% end %>
+  </header>
+
+  <% if posts.empty? %>
+    <p class="empty">No posts yet.</p>
+  <% else %>
+    <ol class="post-list">
+      <% posts.each do |post| %>
+        <li class="post-list-item">
+          <a class="post-list-link" href="<%= h(url(post.url)) %>"><%= h(post.title) %></a>
+          <p class="post-list-meta">
+            <time datetime="<%= post.date %>"><%= format_date(post.date) %></time>
+            <% post.tags.first(3).each do |tag| %>
+              <a class="tag" href="<%= h(tag_url(tag)) %>"><%= h(tag) %></a>
+            <% end %>
+          </p>
+        </li>
+      <% end %>
+    </ol>
+
+    <nav class="pagination" aria-label="Pagination">
+      <% if pagination.prev_url %>
+        <a class="page-link" href="<%= h(url(pagination.prev_url)) %>" rel="prev">Newer posts</a>
+      <% end %>
+      <span class="page-status">Page <%= pagination.current_page %> of <%= pagination.total_pages %></span>
+      <% if pagination.next_url %>
+        <a class="page-link" href="<%= h(url(pagination.next_url)) %>" rel="next">Older posts</a>
+      <% end %>
+    </nav>
+  <% end %>
+</div>

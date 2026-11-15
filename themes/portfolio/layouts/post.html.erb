@@ -1,0 +1,14 @@
+<article class="container narrow post">
+  <header class="post-header">
+    <h1 class="post-title"><%= h(page.title) %></h1>
+    <p class="post-meta">
+      <time datetime="<%= page.date %>"><%= format_date(page.date) %></time>
+      <% page.tags.each do |tag| %>
+        <a class="tag" href="<%= h(tag_url(tag)) %>"><%= h(tag) %></a>
+      <% end %>
+    </p>
+  </header>
+  <div class="post-body">
+    <%= content %>
+  </div>
+</article>

@@ -1,0 +1,4 @@
+name: portfolio
+description: Personal portfolio site with a short hero, project grid from data/projects.yml, and writing
+author: Nicolas Dwi Dharma
+version: 0.1.0

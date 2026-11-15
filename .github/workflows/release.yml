@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: build and draft release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: RSpec
+        run: bundle exec rspec
+
+      - name: Build the gem
+        run: gem build quire.gemspec
+
+      - name: Extract release notes from the changelogs
+        id: notes
+        run: |
+          ruby -e '
+            version = ENV["GITHUB_REF_NAME"].delete_prefix("v")
+            section = lambda do |file|
+              text = File.read(file)
+              match = text.match(/^## v#{Regexp.escape(version)}\s*\n(.*?)(?=^## v|\z)/m)
+              match ? match[1].strip : ""
+            end
+            body = "# English\n\n#{section.call("CHANGELOG.md")}\n\n<br>\n\n---\n\n<br>\n\n# Bahasa Indonesia\n\n#{section.call("CHANGELOG.id.md")}\n"
+            File.write("release-notes.md", body)
+          '
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          name: Quire ${{ github.ref_name }}
+          body_path: release-notes.md
+          files: "*.gem"

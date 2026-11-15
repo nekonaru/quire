@@ -1,0 +1,15 @@
+title: My Quire Site
+description: A personal site built with Quire
+author: Your Name
+base_url: ""
+theme: blog
+posts_per_page: 10
+menu:
+  - title: Home
+    url: /
+  - title: About
+    url: /about/
+markdown:
+  allow_html: false
+social:
+  github: ""
