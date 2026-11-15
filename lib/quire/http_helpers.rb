@@ -54,5 +54,16 @@ module Quire
       expanded = File.expand_path(candidate)
       expanded == base || expanded.start_with?(File.expand_path(base) + File::SEPARATOR)
     end
+
+    LOCAL_HOSTS = %w[127.0.0.1 localhost [::1]].freeze
+
+    # The dev server must only answer requests addressed at this machine.
+    # Anything else (for example a browser tricked into hitting localhost)
+    # gets a 403, which blocks DNS-rebinding reads of the served site.
+    def local_host?(host_header)
+      raw = host_header.to_s.strip.downcase
+      host = raw.start_with?("[") ? raw[/\A\[[0-9a-f:.]+\]/] : raw.split(":", 2).first
+      LOCAL_HOSTS.include?(host)
+    end
   end
 end

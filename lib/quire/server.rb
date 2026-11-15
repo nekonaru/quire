@@ -77,7 +77,14 @@ module Quire
     end
 
     def mount_version_endpoint(server)
-      server.mount_proc("/__quire/version") do |_req, res|
+      server.mount_proc("/__quire/version") do |req, res|
+        unless HttpHelpers.local_host?(req["Host"])
+          res.status = 403
+          res["Content-Type"] = "text/plain"
+          res.body = "Forbidden"
+          next
+        end
+
         res.status = 200
         res["Content-Type"] = "application/json"
         res["Cache-Control"] = "no-store"
@@ -88,6 +95,13 @@ module Quire
     def mount_site(server)
       public_dir = File.join(@root, "public")
       server.mount_proc("/") do |req, res|
+        unless HttpHelpers.local_host?(req["Host"])
+          res.status = 403
+          res["Content-Type"] = "text/plain"
+          res.body = "Forbidden"
+          next
+        end
+
         serve_file(public_dir, req.path, res)
       end
     end
