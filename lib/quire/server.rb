@@ -1,0 +1,123 @@
+# frozen_string_literal: true
+
+require "fileutils"
+require "listen"
+require "json"
+require "webrick"
+require_relative "builder"
+require_relative "config_poller"
+require_relative "errors"
+require_relative "http_helpers"
+
+module Quire
+  # Local development server. Serves the built site and reloads the browser
+  # when files change. Reload detection: the watcher rebuilds on change and
+  # bumps a build version; the injected script in served HTML polls
+  # /__quire/version every second and reloads when it sees a new one.
+  class Server
+    WATCHED_DIRS = %w[content data static themes].freeze
+    WATCHED_FILES = %w[quire.yml].freeze
+
+    def initialize(root, port: 4000, drafts: false, future: false)
+      @root = File.expand_path(root)
+      @port = port
+      @drafts = drafts
+      @future = future
+      @version = 0
+      @mutex = Mutex.new
+    end
+
+    def start
+      build!
+
+      server = WEBrick::HTTPServer.new(Port: @port, BindAddress: "127.0.0.1", AccessLog: [], Logger: WEBrick::Log.new(File::NULL))
+      mount_version_endpoint(server)
+      mount_site(server)
+
+      listener = start_listener
+      trap("INT") { server.shutdown }
+      trap("TERM") { server.shutdown }
+
+      puts "Quire serving #{@root} at http://127.0.0.1:#{@port} (Ctrl+C to stop)"
+      server.start
+    ensure
+      listener&.stop
+    end
+
+    private
+
+    def build!
+      Builder.new(@root, drafts: @drafts, future: @future, force: true).build
+      @mutex.synchronize { @version += 1 }
+    rescue Error => e
+      warn "Build failed: #{e.message}"
+      raise
+    end
+
+    def rebuild_quietly
+      build!
+      puts "Rebuilt at #{Time.now.strftime('%H:%M:%S')}"
+    rescue Error
+      # keep serving the last good build
+      nil
+    end
+
+    def start_listener
+      paths = WATCHED_DIRS.map { |d| File.join(@root, d) }.select { |d| Dir.exist?(d) }
+      pattern = /\.(md|yml|yaml|css|js|html|png|jpg|jpeg|gif|svg|webp|ico|txt|xml)$/i
+      listener = Listen.to(*paths, only: pattern) { rebuild_quietly }
+      start_config_poll
+      listener.start
+      listener
+    end
+
+    def start_config_poll
+      files = WATCHED_FILES.map { |f| File.join(@root, f) }.select { |f| File.exist?(f) }
+      ConfigPoller.new(files) { rebuild_quietly }.start
+    end
+
+    def mount_version_endpoint(server)
+      server.mount_proc("/__quire/version") do |_req, res|
+        res.status = 200
+        res["Content-Type"] = "application/json"
+        res["Cache-Control"] = "no-store"
+        res.body = JSON.generate({ version: @mutex.synchronize { @version } })
+      end
+    end
+
+    def mount_site(server)
+      public_dir = File.join(@root, "public")
+      server.mount_proc("/") do |req, res|
+        serve_file(public_dir, req.path, res)
+      end
+    end
+
+    def serve_file(public_dir, request_path, res)
+      relative = request_path.sub(%r{\A/+}, "")
+      candidate = File.join(public_dir, relative)
+      candidate = File.join(candidate, "index.html") if request_path.end_with?("/") || File.extname(relative).empty?
+
+      unless HttpHelpers.safe_within?(public_dir, candidate) && File.file?(candidate)
+        respond_not_found(public_dir, res)
+        return
+      end
+
+      res.status = 200
+      res["Content-Type"] = HttpHelpers.content_type(candidate)
+      body = File.binread(candidate)
+      body = HttpHelpers.inject_reload(body) if candidate.end_with?(".html")
+      res.body = body
+    end
+
+    def respond_not_found(public_dir, res)
+      not_found = File.join(public_dir, "404.html")
+      res.status = 404
+      res["Content-Type"] = "text/html"
+      res.body = if File.exist?(not_found)
+                   HttpHelpers.inject_reload(File.read(not_found))
+                 else
+                   "<h1>404 Not Found</h1>"
+                 end
+    end
+  end
+end
