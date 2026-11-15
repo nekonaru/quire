@@ -7,7 +7,7 @@
     <% end %>
     <p class="hero-actions">
       <% if config.email %><a class="button" href="mailto:<%= h(config.email) %>">Contact</a><% end %>
-      <a class="button ghost" href="<%= url('/about/') %>">About me</a>
+      <a class="button ghost" href="<%= h(url('/about/')) %>">About me</a>
     </p>
   </div>
 </section>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= h(page.title) %><%= page.url == "/" ? "" : " · #{h(config.title)}" %></title>
+  <title><%= h(page.title) %><%= page.url == "/" ? "" : " Â· #{h(config.title)}" %></title>
   <meta name="description" content="<%= h(page.description.to_s.empty? ? config.description : page.description) %>">
   <meta property="og:title" content="<%= h(page.title) %>">
   <meta property="og:description" content="<%= h(page.description.to_s.empty? ? config.description : page.description) %>">
@@ -18,7 +18,7 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="wordmark" href="<%= url('/') %>"><%= h(config.title) %></a>
+      <a class="wordmark" href="<%= h(url('/')) %>"><%= h(config.title) %></a>
       <nav class="site-nav" aria-label="Main navigation">
         <% config.menu.each do |item| %>
           <a href="<%= h(url(item['url'])) %>"><%= h(item['title']) %></a>
