@@ -38,7 +38,7 @@ jobs:
 
       - name: Build the example site
         run: |
-          ruby -Ilib -e "require 'quire'; Quire::Builder.new('examples/demo', force: true).build"
+          bundle exec ruby -Ilib -e "require 'quire'; Quire::Builder.new('examples/demo', force: true).build"
 
       - name: Check the example site output
         run: |
