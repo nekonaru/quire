@@ -390,7 +390,7 @@ Lints are enforced through `.rubocop.yml`. The demo site at `examples/demo/` is 
 
 ## Security
 
-Quire builds static files from your own Markdown; it never runs a database or an application server in production. Raw HTML in Markdown is escaped by default, so a post cannot inject markup into the site. Secrets are scanned in CI, and dependency review happens through the release checklist. To report a vulnerability, see [`SECURITY.md`](SECURITY.md).
+Quire builds static files from your own Markdown; it never runs a database or an application server in production. Raw HTML in Markdown is escaped by default, so a post cannot inject markup into the site. Dependencies are pinned in the gemspec and exercised by CI (RuboCop, RSpec, and a full example-site build), and secrets are scanned on every push. To report a vulnerability, see [`SECURITY.md`](SECURITY.md).
 
 > [!NOTE]
 > Please report vulnerabilities privately via GitHub security advisories, not as public issues.

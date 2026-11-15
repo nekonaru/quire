@@ -32,19 +32,31 @@ module Quire
       raise Error.new("Markdown error: #{e.message}", file: file)
     end
 
-    # Escape &, < and > in everything outside fenced code blocks and inline
-    # code spans. Code content keeps its characters so it survives kramdown's
-    # own escaping untouched.
+    # Escape &, < and > in everything outside fenced code blocks, inline
+    # code spans and indented code blocks. Code content keeps its characters
+    # so it survives kramdown's own escaping untouched.
     def escape_html_outside_code(text)
       result = +""
       in_code_fence = false
+      previous_blank = true
       text.each_line do |line|
         if line.match?(FENCED_CODE)
           in_code_fence = !in_code_fence
           result << line
+          previous_blank = false
           next
         end
-        result << (in_code_fence ? line : escape_inline(line))
+        if in_code_fence || (previous_blank && line.match?(/\A(    |\t)/))
+          result << line
+          next
+        end
+        if line.strip.empty?
+          result << line
+          previous_blank = true
+          next
+        end
+        result << escape_inline(line)
+        previous_blank = false
       end
       result
     end

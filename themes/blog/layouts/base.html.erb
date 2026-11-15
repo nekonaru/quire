@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= h(page.title) %><%= page.url == "/" ? "" : " Â· #{h(config.title)}" %></title>
+  <title><%= h(page.title) %><%= page.url == "/" ? "" : " · #{h(config.title)}" %></title>
   <meta name="description" content="<%= h(page.description.to_s.empty? ? config.description : page.description) %>">
   <meta property="og:title" content="<%= h(page.title) %>">
   <meta property="og:description" content="<%= h(page.description.to_s.empty? ? config.description : page.description) %>">

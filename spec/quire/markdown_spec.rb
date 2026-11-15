@@ -19,6 +19,12 @@ RSpec.describe Quire::Markdown do
     expect(html).to include("puts")
   end
 
+  it "does not double-escape HTML inside indented code blocks" do
+    html = described_class.render("para\n\n    <b>raw</b>\n")
+    expect(html).to include("&lt;b&gt;")
+    expect(html).not_to include("&amp;lt;")
+  end
+
   it "renders double-backtick code spans containing angle brackets" do
     html = described_class.render("`` `<b>x</b>` ``")
     expect(html).to include("<code>")

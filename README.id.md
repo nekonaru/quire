@@ -390,7 +390,7 @@ Lint ditegakkan lewat `.rubocop.yml`. Situs demo di `examples/demo/` dipakai seb
 
 ## Keamanan
 
-Quire membangun file statis dari Markdown kamu sendiri; Quire tidak menjalankan database atau application server di produksi. Raw HTML di Markdown di-escape secara default, jadi sebuah post tidak bisa menyuntikkan markup ke situs. Rahasia dipindai di CI, dan review dependensi dilakukan lewat checklist rilis. Untuk melaporkan kerentanan, lihat [`SECURITY.md`](SECURITY.md).
+Quire membangun file statis dari Markdown kamu sendiri; Quire tidak menjalankan database atau application server di produksi. Raw HTML di Markdown di-escape secara default, jadi sebuah post tidak bisa menyuntikkan markup ke situs. Dependensi dipin di gemspec dan diuji oleh CI (RuboCop, RSpec, dan build situs contoh penuh), dan secret dipindai di setiap push. Untuk melaporkan kerentanan, lihat [`SECURITY.md`](SECURITY.md).
 
 > [!NOTE]
 > Laporkan kerentanan secara privat lewat GitHub security advisories, bukan sebagai issue publik.

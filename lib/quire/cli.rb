@@ -30,8 +30,10 @@ module Quire
     def new(subcommand, *args)
       case subcommand
       when "site"
-        name = args.shift or raise Thor::Error, "usage: quire new site NAME"
-        create_site(name)
+        names = args
+        raise Thor::Error, "usage: quire new site NAME (got #{names.size} arguments)" if names.size != 1
+
+        create_site(names.first)
       when "post", "page"
         title = args.join(" ")
         raise Thor::Error, "usage: quire new #{subcommand} TITLE" if title.strip.empty?

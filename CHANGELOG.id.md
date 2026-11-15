@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada Quire didokumentasikan di sini. Formatnya mengikuti [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), dan proyek ini memakai [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v0.1.1
+
+Rilis patch yang memperbaiki cacat encoding pada judul dan beberapa masalah ketahanan.
+
+## Perbaikan bug
+
+- **Mojibake di judul halaman.** Pemisah antara judul halaman dan judul situs ter-encode dua kali dan tampil sebagai "Â·" di semua halaman selain beranda pada kedua tema.
+- **Indented code block.** HTML di dalam code block 4 spasi ter-escape dua kali, sehingga contoh kode menampilkan teks entity mentah alih-alih markup.
+- **Lingkungan non-UTF-8.** Pembuat slug tidak lagi crash ketika nama file atau konten memakai locale non-UTF-8.
+- **Parsing front matter.** Blok YAML tidak lagi menyertakan baris `---` penutup, menghilangkan jebakan parsing yang laten.
+- **Validasi posts_per_page.** Nilai desimal ditolak dengan pesan error yang jelas alih-alih dipotong diam-diam menjadi integer.
+- **Jumlah argumen `quire new site`.** Argumen berlebih sekarang menghasilkan error usage alih-alih diabaikan diam-diam.
+
+## Peningkatan
+
+- **Akurasi README.** Bagian Security sekarang menjelaskan apa yang benar-benar dicek CI alih-alih checklist rilis yang tidak ada.
+
 ## v0.1.0
 
 Rilis publik pertama Quire, static site generator yang ditulis dalam Ruby.

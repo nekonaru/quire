@@ -33,6 +33,21 @@ RSpec.describe Quire::Config do
     expect { described_class.new(dir) }.to raise_error(Quire::Error, /theme/)
   end
 
+  it "rejects a float posts_per_page" do
+    File.write(File.join(dir, "quire.yml"), "posts_per_page: 2.9\n")
+    expect { described_class.new(dir) }.to raise_error(Quire::Error, /posts_per_page/)
+  end
+
+  it "rejects posts_per_page below 1" do
+    File.write(File.join(dir, "quire.yml"), "posts_per_page: 0\n")
+    expect { described_class.new(dir) }.to raise_error(Quire::Error, /posts_per_page/)
+  end
+
+  it "accepts an integer-like string for posts_per_page" do
+    File.write(File.join(dir, "quire.yml"), "posts_per_page: \"12\"\n")
+    expect(described_class.new(dir).posts_per_page).to eq(12)
+  end
+
   it "rejects a non-integer posts_per_page" do
     File.write(File.join(dir, "quire.yml"), "posts_per_page: lots\n")
     expect { described_class.new(dir) }.to raise_error(Quire::Error, /posts_per_page/)

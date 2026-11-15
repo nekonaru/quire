@@ -27,4 +27,9 @@ RSpec.describe Quire::CLI do
     expect(attributes["title"]).to eq("Evil\ndraft: true")
     expect(attributes["draft"]).to be(false)
   end
+
+  it "rejects extra arguments for new site" do
+    expect { described_class.start(["new", "site", "my", "cool", "site", "--path", dir]) }
+      .to raise_error(SystemExit)
+  end
 end
