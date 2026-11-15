@@ -20,14 +20,15 @@ Rilis publik pertama Quire, static site generator yang ditulis dalam Ruby.
 
 ## Penggunaan
 
-Install dari GitHub dengan Ruby 3.2 atau lebih baru:
+Install dari GitHub Releases dengan Ruby 3.2 atau lebih baru:
 
 ```bash
-gem install --git https://github.com/nekonaru/quire.git
+curl -LO https://github.com/nekonaru/quire/releases/download/v0.1.0/quire-0.1.0.gem
+gem install ./quire-0.1.0.gem
 quire new site mysite
 cd mysite
 quire build
 quire serve
 ```
 
-Atau build gem dari source dengan `gem build quire.gemspec`. Lihat README untuk tutorial lengkap.
+Atau build gem dari source dengan `gem build quire.gemspec` dan `gem install ./quire-0.1.0.gem`. Lihat README untuk tutorial lengkap.
