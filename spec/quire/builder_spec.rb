@@ -74,6 +74,18 @@ RSpec.describe Quire::Builder do
     expect(cached.files_written).to eq(0)
   end
 
+  it "never serves the cache when drafts or future posts are requested" do
+    root = copy_site!("demo")
+    described_class.new(root, output_dir: output_dir, force: true).build
+
+    cached = described_class.new(root, output_dir: output_dir).build
+    expect(cached.cached).to be(true)
+
+    with_drafts = described_class.new(root, output_dir: output_dir, drafts: true, future: true).build
+    expect(with_drafts.cached).to be(false)
+    expect(with_drafts.files_written).to be > 0
+  end
+
   it "lets the site override a theme layout" do
     root = copy_site!("demo")
     override_dir = File.join(root, "themes", "portfolio", "layouts")
@@ -103,5 +115,24 @@ RSpec.describe Quire::Builder do
 
     expect { described_class.new(root, output_dir: output_dir, force: true).build }
       .to raise_error(Quire::Error, /broken\.md/)
+  end
+
+  it "fails with a clear error when two tags slug to the same path" do
+    root = copy_site!("demo")
+    File.write(File.join(root, "content", "posts", "2026-11-12-c-lang.md"),
+               "---\ntitle: C Lang\ndate: 2026-11-12\ntags:\n  - C\n  - C++\n---\nBody\n")
+
+    expect { described_class.new(root, output_dir: output_dir, force: true).build }
+      .to raise_error(Quire::Error, /C.*C\+\+/)
+  end
+
+  it "reports the template file and line when a theme layout has an ERB error" do
+    root = copy_site!("demo")
+    override_dir = File.join(root, "themes", "portfolio", "layouts")
+    FileUtils.mkdir_p(override_dir)
+    File.write(File.join(override_dir, "404.html.erb"), "<main>\n  <%= 1 + %>\n</main>\n")
+
+    expect { described_class.new(root, output_dir: output_dir, force: true).build }
+      .to raise_error(Quire::Error, /404\.html\.erb:\d+/)
   end
 end

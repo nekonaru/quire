@@ -48,7 +48,8 @@ module Quire
     private
 
     def cached_build?(theme)
-      !@force && @cache.fresh?(theme) && File.directory?(@output_dir)
+      # Draft/future flags change the output set, so never serve from the cache.
+      !@force && !@drafts && !@future && @cache.fresh?(theme) && File.directory?(@output_dir)
     end
 
     def cached_result
