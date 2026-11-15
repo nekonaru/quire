@@ -1,0 +1,8 @@
+/.bundle/
+/pkg/
+*.gem
+Gemfile.lock
+/public/
+.quire-cache.json
+/examples/*/public/
+/coverage/
