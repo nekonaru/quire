@@ -114,18 +114,14 @@ module Quire
       target = File.join(dir, file_name)
       raise Thor::Error, "file already exists: #{target}" if File.exist?(target)
 
-      front_matter = <<~YAML
-        ---
-        title: #{title}
-        date: #{Date.today}
-        tags: []
-        draft: #{draft}
-        description: ""
-        ---
-
-        Write your content here.
-      YAML
-      File.write(target, front_matter)
+      front_matter_data = YAML.dump({
+                                      "title" => title,
+                                      "date" => Date.today.to_s,
+                                      "tags" => [],
+                                      "draft" => draft,
+                                      "description" => ""
+                                    }).sub(/\A---\n/, "")
+      File.write(target, "---\n#{front_matter_data}---\n\nWrite your content here.\n")
       puts "Created #{target}"
     end
   end
