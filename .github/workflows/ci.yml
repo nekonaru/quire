@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, ruby ${{ matrix.ruby }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        ruby: ["3.2", "3.4"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: RuboCop
+        run: bundle exec rubocop --format github
+
+      - name: RSpec
+        run: bundle exec rspec
+
+      - name: Build the gem
+        run: gem build quire.gemspec
+
+      - name: Build the example site
+        run: ruby -Ilib -e "require 'quire'; Quire::Builder.new('examples/demo', force: true).build"
+
+      - name: Check the example site output
+        run: ruby -e "abort 'missing index' unless File.exist?('examples/demo/public/index.html'); abort 'missing feed' unless File.exist?('examples/demo/public/feed.xml')"
+
+  secret-scan:
+    name: secret-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
