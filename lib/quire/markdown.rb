@@ -50,17 +50,24 @@ module Quire
     end
 
     def escape_inline(line)
-      # Split on inline code spans (single backticks), escape the odd parts.
-      parts = line.split(/(`[^`\n]*`)/)
-      parts.each_with_index.map do |part, index|
-        if index.odd?
-          part
-        else
-          part.gsub(/&(?!(?:[a-zA-Z][a-zA-Z0-9]*|#\d+|#x[0-9a-fA-F]+);)/, "&amp;")
-              .gsub("<", "&lt;")
-              .gsub(">", "&gt;")
-        end
-      end.join
+      # Balanced-length code spans (` or `` or more) are kept verbatim;
+      # everything outside them is escaped.
+      result = +""
+      pos = 0
+      line.to_enum(:scan, /(`+)([^\n]*?)\1/).each do
+        span = Regexp.last_match
+        result << escape_text(line[pos...span.begin(0)])
+        result << span[0]
+        pos = span.end(0)
+      end
+      result << escape_text(line[pos..])
+      result
+    end
+
+    def escape_text(text)
+      text.gsub(/&(?!(?:[a-zA-Z][a-zA-Z0-9]*|#\d+|#x[0-9a-fA-F]+);)/, "&amp;")
+          .gsub("<", "&lt;")
+          .gsub(">", "&gt;")
     end
   end
 end

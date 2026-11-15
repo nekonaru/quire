@@ -19,6 +19,12 @@ RSpec.describe Quire::Markdown do
     expect(html).to include("puts")
   end
 
+  it "renders double-backtick code spans containing angle brackets" do
+    html = described_class.render("`` `<b>x</b>` ``")
+    expect(html).to include("<code>")
+    expect(html).to include("&lt;b&gt;x&lt;/b&gt;")
+  end
+
   it "renders footnotes" do
     html = described_class.render("Text with a note[^1].\n\n[^1]: The note.")
     expect(html).to include("footnote")
