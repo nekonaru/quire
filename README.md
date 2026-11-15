@@ -50,6 +50,8 @@
 
 > _"Markdown in, site out. No JavaScript, no magic."_
 
+Live demo: https://nekonaru.github.io/quire/ (the `examples/demo` site in this repository, deployed by GitHub Actions on every change).
+
 ---
 
 ## Features
@@ -401,6 +403,7 @@ Quire builds static files from your own Markdown; it never runs a database or an
 |----------|---------|
 | `ci.yml` | RuboCop, RSpec (Ruby 3.2 and 3.4 on Linux, Windows, macOS), gem build, example site build, secret scan on every push and pull request |
 | `release.yml` | Builds the gem and drafts a GitHub release with the changelog notes on `v*` tags |
+| `deploy-demo.yml` | Builds the demo site and deploys it to GitHub Pages on every push to main that touches the demo or the generator |
 
 The release is tagged only after CI is green on the default branch.
 
